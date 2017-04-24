@@ -16,6 +16,9 @@ import javafx.stage.StageStyle;
  * @author toru
  */
 public class TinyGadgetApp extends Application {
+    // ドラッグ＆ドロップでウィンドウの移動
+    private double dragStartX;
+    private double dragStartY;
     
     @Override
     public void start(Stage stage) throws Exception {
@@ -26,6 +29,16 @@ public class TinyGadgetApp extends Application {
         // ウィンドウ枠の非表示と背景透明化
         scene.setFill(Color.TRANSPARENT);
         stage.initStyle(StageStyle.TRANSPARENT);
+        
+        // ドラッグ操作でウィンドウを移動
+        scene.setOnMousePressed(event -> {
+            dragStartX = event.getSceneX();
+            dragStartY = event.getSceneY();
+        });
+        scene.setOnMouseDragged(event -> {
+            stage.setX(event.getScreenX() - dragStartX);
+            stage.setY(event.getScreenY() - dragStartY);
+        });
         
         stage.setScene(scene);
         stage.show();
