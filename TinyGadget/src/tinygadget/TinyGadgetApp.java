@@ -7,9 +7,12 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -46,6 +49,13 @@ public class TinyGadgetApp extends Application {
                 zoom(event.getDeltaY() > 0 ? 1.1 : 0.9, stage);
             }
         });
+        
+        // マウス右クリックでポップアップメニューを表示
+        ContextMenu popup = createContextMenu(stage);
+        root.setOnContextMenuRequested(event -> {
+            popup.show(stage, event.getScreenX(), event.getScreenY());
+        });
+        
         stage.setScene(scene);
         stage.show();
     }
@@ -59,6 +69,21 @@ public class TinyGadgetApp extends Application {
     private void zoom(double factor, Stage stage) {
         stage.setWidth(stage.getWidth() * factor);
         stage.setHeight(stage.getHeight() * factor);
+    }
+    
+    /**
+     * ポップアップメニューを生成する。
+     * 
+     * @return ポップアップメニュー
+     */
+    private ContextMenu createContextMenu(Stage stage) {
+        MenuItem exitItem = new MenuItem("終了");
+        exitItem.setStyle("-fx-font-size: 2em");
+        exitItem.setOnAction(event -> {
+            stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+        });
+        ContextMenu popup = new ContextMenu(exitItem);
+        return popup;
     }
     
     /**
