@@ -10,8 +10,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- *
- * @author toru
+ * ImageGadgetアプリケーションのエントリポイントを提供するクラス。
  */
 public class ImageGadgetApp extends Application {
     

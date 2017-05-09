@@ -5,25 +5,20 @@ package imagegadget;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
 
 /**
- *
- * @author toru
+ * ImageGadgeViewのコントローラクラス。
  */
 public class ImageGadgetViewController implements Initializable {
     
     @FXML
-    private Label label;
-    
+    private Region root;
     @FXML
-    private void handleButtonAction(ActionEvent event) {
-        System.out.println("You clicked me!");
-        label.setText("Hello World!");
-    }
+    private ImageView imageView;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
