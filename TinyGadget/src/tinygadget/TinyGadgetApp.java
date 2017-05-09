@@ -50,6 +50,11 @@ public class TinyGadgetApp extends Application {
             }
         });
         
+        // タッチパネルのズーム（ピンチ）操作でウィンドウサイズを変更
+        scene.setOnZoom(event -> {
+            zoom(event.getZoomFactor(), stage);
+        });
+        
         // マウス右クリックでポップアップメニューを表示
         ContextMenu popup = createContextMenu(stage);
         root.setOnContextMenuRequested(event -> {
