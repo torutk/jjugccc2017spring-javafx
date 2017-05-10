@@ -22,7 +22,9 @@ public class ImageGadgetViewController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        imageView.fitWidthProperty().bind(root.widthProperty());
+        imageView.fitHeightProperty().bind(root.heightProperty());
+        imageView.setPreserveRatio(true);
     }    
     
 }
