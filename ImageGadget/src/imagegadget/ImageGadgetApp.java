@@ -3,6 +3,7 @@
  */
 package imagegadget;
 
+import java.util.prefs.Preferences;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,6 +22,12 @@ public class ImageGadgetApp extends Application {
     // ドラッグ＆ドロップでウィンドウの移動
     private double dragStartX;
     private double dragStartY;
+    // 設定の保存で使用するプリファレンスとキー
+    private Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+    private static final String KEY_STAGE_X = "stageX";
+    private static final String KEY_STAGE_Y = "stageY";
+    private static final String KEY_STAGE_WIDTH = "stageWidth";
+    private static final String KEY_STAGE_HEIGHT = "stageHeight";
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -60,6 +67,12 @@ public class ImageGadgetApp extends Application {
             popup.show(stage, event.getScreenX(), event.getScreenY());
         });
         
+        // ウィンドウが終了するときに状態を保存
+        stage.setOnCloseRequest(event -> saveStatus(stage));
+        
+        // 保存した状態があれば復元
+        loadStatus(stage);
+        
         stage.setScene(scene);
         stage.show();
     }
@@ -88,6 +101,26 @@ public class ImageGadgetApp extends Application {
         });
         ContextMenu popup = new ContextMenu(exitItem);
         return popup;
+    }
+    
+    /**
+     * 状態を永続領域に保存する。
+     */
+    private void saveStatus(Stage stage) {
+        prefs.putInt(KEY_STAGE_X, (int) stage.getX());
+        prefs.putInt(KEY_STAGE_Y, (int) stage.getY());
+        prefs.putInt(KEY_STAGE_WIDTH, (int) stage.getWidth());
+        prefs.putInt(KEY_STAGE_HEIGHT, (int) stage.getHeight());
+    }
+    
+    /**
+     * 永続領域に保存された状態を復元する。
+     */
+    private void loadStatus(Stage stage) {
+        stage.setX(prefs.getInt(KEY_STAGE_X, 0));
+        stage.setY(prefs.getInt(KEY_STAGE_Y, 0));
+        stage.setWidth(prefs.getInt(KEY_STAGE_WIDTH, 320));
+        stage.setHeight(prefs.getInt(KEY_STAGE_HEIGHT, 200));
     }
     
     /**
