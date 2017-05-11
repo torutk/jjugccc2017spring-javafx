@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -42,7 +43,8 @@ public class ImageGadgetViewController implements Initializable {
     private void handleDragDropped(DragEvent event) {
         Dragboard dragboard = event.getDragboard();
         if (dragboard.hasFiles() && dragboard.getFiles().get(0).isDirectory()) {
-            model = new ImageGadgetViewModel(Paths.get(dragboard.getFiles().get(0).toURI()));                
+            model = new ImageGadgetViewModel(Paths.get(dragboard.getFiles().get(0).toURI()));
+            nextImage(event);
             event.setDropCompleted(true);
         } else {
             event.setDropCompleted(false);
@@ -55,6 +57,7 @@ public class ImageGadgetViewController implements Initializable {
         imageView.fitWidthProperty().bind(root.widthProperty());
         imageView.fitHeightProperty().bind(root.heightProperty());
         imageView.setPreserveRatio(true);
+        nextImage(new ActionEvent());
         
         Timeline timer = new Timeline();
         timer.getKeyFrames().add(new KeyFrame(Duration.seconds(10), this::nextImage));
