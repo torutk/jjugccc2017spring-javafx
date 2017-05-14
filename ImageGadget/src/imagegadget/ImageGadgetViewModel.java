@@ -37,10 +37,12 @@ public class ImageGadgetViewModel {
     }
     
     public Optional<Image> next() {
-        if (imageFiles.size() <= currentIndex + 1) {
+        if (imageFiles.size() == 0) {
             return Optional.empty();
+        } else if (imageFiles.size() <= currentIndex) {
+            currentIndex = 0;
         }
-        return Optional.ofNullable(loadImage(imageFiles.get(++currentIndex)));
+        return Optional.ofNullable(loadImage(imageFiles.get(currentIndex++)));
     }
 
     private Image loadImage(Path path) {
