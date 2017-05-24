@@ -3,9 +3,11 @@
  */
 package earthgadget;
 
-import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
-import javafx.animation.AnimationTimer;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.AmbientLight;
 import javafx.scene.Group;
@@ -23,19 +25,16 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 /**
  * 地球が3次元表示で回転するデスクトップガジェット。
  */
 public class EarthGadgetApp extends Application {
     private static final double FRAMES_PER_SECOND = 5;
-    private static final double AZIMUTH_SPEED_PER_SECOND = 2.0; // degree
-    private static final double ORBITAL_RADIUS = 300;
+    private static final double AZIMUTH_SPEED_PER_SECOND = 2; // degree
     
     private Translate cameraTranslate = new Translate(0, 0, -300);
-    private long previousHandledTime;
-    private long frameIntervalTimeNanos = (long) (TimeUnit.SECONDS.toNanos(1) / FRAMES_PER_SECOND);
-    private double azimuth;
     private Rotate cameraRotateY = new Rotate(0, Rotate.Y_AXIS);
     
     // ドラッグ＆ドロップでウィンドウの移動
@@ -62,8 +61,7 @@ public class EarthGadgetApp extends Application {
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.setFieldOfView(45);
         camera.setFarClip(1000);
-        camera.getTransforms().addAll(cameraTranslate, cameraRotateY);
-
+        camera.getTransforms().addAll(cameraRotateY, cameraTranslate);
 
         // 点光源の定義
         final PointLight pointLight = new PointLight(Color.WHITE);
@@ -122,24 +120,29 @@ public class EarthGadgetApp extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         
-        AnimationTimer timer = new AnimationTimer() {
-            public void handle(long now) {
-                    update(now);
-                }
-        };
-        timer.start();
+        Timeline animation = createAnimation();
+        animation.play();
     }
 
-    private void update(long now) {
-        if (now - previousHandledTime < frameIntervalTimeNanos)
-            return;
-        previousHandledTime = now;
-        azimuth += AZIMUTH_SPEED_PER_SECOND / FRAMES_PER_SECOND;
-        
-        cameraTranslate.setX(Math.sin(Math.toRadians(azimuth)) * ORBITAL_RADIUS);
-        cameraTranslate.setZ(-1 * Math.cos(Math.toRadians(azimuth)) * ORBITAL_RADIUS);
-        cameraRotateY.setAngle(-1 * azimuth);
+    /**
+     * カメラを地球中心に1周回転するアニメーションを作成する。
+     * 
+     * @return 360度回転するアニメーション
+     */
+    private Timeline createAnimation() {
+        Timeline animation = new Timeline(FRAMES_PER_SECOND);
+        animation.setCycleCount(Animation.INDEFINITE);
+        animation.getKeyFrames().addAll(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(cameraRotateY.angleProperty(), 0)
+                ),
+                new KeyFrame(Duration.seconds(360d / AZIMUTH_SPEED_PER_SECOND),
+                        new KeyValue(cameraRotateY.angleProperty(), -360)
+                )
+        );
+        return animation;
     }
+
     /**
      * 指定した拡大率で指定した stage の大きさを変更する。
      * 
