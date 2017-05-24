@@ -3,6 +3,7 @@
  */
 package earthgadget;
 
+import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -24,15 +25,16 @@ import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 /**
- *
- * @author toru
+ * 地球が3次元表示で回転するデスクトップガジェット。
  */
 public class EarthGadgetApp extends Application {
-    private static final double AZIMUTH_SPEED_PER_100MILLIS = 1.0;
+    private static final double FRAMES_PER_SECOND = 5;
+    private static final double AZIMUTH_SPEED_PER_SECOND = 2.0; // degree
     private static final double ORBITAL_RADIUS = 300;
     
     private Translate cameraTranslate = new Translate(0, 0, -300);
-    private long previousHandledTime = Long.MAX_VALUE;
+    private long previousHandledTime;
+    private long frameIntervalTimeNanos = (long) (TimeUnit.SECONDS.toNanos(1) / FRAMES_PER_SECOND);
     private double azimuth;
     private Rotate cameraRotateY = new Rotate(0, Rotate.Y_AXIS);
     
@@ -122,17 +124,17 @@ public class EarthGadgetApp extends Application {
         
         AnimationTimer timer = new AnimationTimer() {
             public void handle(long now) {
-                update(now);
-            }
+                    update(now);
+                }
         };
         timer.start();
     }
 
     private void update(long now) {
-        if (previousHandledTime + 33_000_000 > now)
+        if (now - previousHandledTime < frameIntervalTimeNanos)
             return;
         previousHandledTime = now;
-        azimuth += AZIMUTH_SPEED_PER_100MILLIS;
+        azimuth += AZIMUTH_SPEED_PER_SECOND / FRAMES_PER_SECOND;
         
         cameraTranslate.setX(Math.sin(Math.toRadians(azimuth)) * ORBITAL_RADIUS);
         cameraTranslate.setZ(-1 * Math.cos(Math.toRadians(azimuth)) * ORBITAL_RADIUS);
