@@ -20,12 +20,11 @@ public class TinyGadgetApp extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
+        gadgetControl = new TinyGadgetControl(stage, Preferences.userNodeForPackage(this.getClass()));
         Parent root = FXMLLoader.load(getClass().getResource("TinyGadgetView.fxml"));
         
         Scene scene = new Scene(root);
-        gadgetControl = new TinyGadgetControl(stage, scene, Preferences.userNodeForPackage(this.getClass()));
-        gadgetControl.setup();
-        
+
         stage.setScene(scene);
         stage.show();
     }

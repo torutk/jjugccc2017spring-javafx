@@ -16,8 +16,15 @@ import javafx.stage.WindowEvent;
  * ガジェットプログラムに共通する振る舞いをユーティリティとして提供するクラス。
  * 
  * <li>マウスドラッグによるウィンドウの移動
+ * <li>Ctrlキー+マウスホイールによるウィンドウの大きさ変更
+ * <li>ピンチ操作によるウィンドウの大きさ変更
+ * <li>ポップアップメニューからウィンドウ終了
+ * <li>終了時に位置・大きさを保存し、起動時に復元
  */
 public class TinyGadgetControl {
+    private static final int MIN_WIDTH = 128;
+    private static final int MIN_HEIGHT = 128;
+    
     private Stage stage;
     private Scene scene;
     
@@ -32,36 +39,45 @@ public class TinyGadgetControl {
     private static final String KEY_STAGE_HEIGHT = "stageHeight";
     
     /**
-     * 指定した stage と scene を対象としてインスタンス化。
+     * 指定した stage に対してガジェットプログラムの振る舞いを提供する。
      * <p>
-     * 状態保存は行わない。
+     * 本呼び出し時に、まだstageにsceneをセットしていない場合、あるいは後でsceneを差し替えた場合は
+     * sceneがセット（差し替え）された時点でsceneに対すて振る舞いを設定する。
+     * <p>
+     * 本コンストラクタを使用した場合、終了時の状態保存と起動時の復元は行わない。
      * 
      * @param stage ガジェットの振る舞いを提供する対象 stage
-     * @param scene ガジェットの振る舞いを提供する対象 scene
      */
-    public TinyGadgetControl(Stage stage, Scene scene) {
+    public TinyGadgetControl(Stage stage) {
         this.stage = stage;
-        this.scene = scene;
-        this.scene.setFill(Color.TRANSPARENT);
+        if (scene != null) {
+            setup();
+        }
+        stage.sceneProperty().addListener((obs, ov, nv) -> {
+            if (ov != nv && nv != null) {
+                scene = nv;
+                setup();
+            }
+        });
         this.stage.initStyle(StageStyle.TRANSPARENT);
     }
     
     /**
-     * 指定した stage 、 scene と prefs を対象としてインスタンス化。
+     * 指定した stage と prefs を対象としてインスタンス化。
      * 
      * @param stage ガジェットの振る舞いを提供する対象 stage
-     * @param scene ガジェットの振る舞いを提供する対象 scene
      * @param prefs ガジェットの状態を保存する preferences
      */
-    public TinyGadgetControl(Stage stage, Scene scene, Preferences prefs) {
-        this(stage, scene);
+    public TinyGadgetControl(Stage stage, Preferences prefs) {
+        this(stage);
         this.prefs = prefs;
     }
     
     /**
-     * ガジェットの振る舞いを、コンストラクタで指定した stage, scene に設定する。
+     * ガジェットの振る舞いを、stage, scene に設定する。
      */
-    public void setup() {
+    protected void setup() {
+        scene.setFill(Color.TRANSPARENT);
         setupDragMove();
         setupResize();
         setupContextMenu();
@@ -103,8 +119,11 @@ public class TinyGadgetControl {
      * @param factor 拡大率（1.0が等倍で、 1.0 より大で大きく、 1.0　より小で小さくする）
      */
     private void zoom(double factor) {
-        stage.setWidth(stage.getWidth() * factor);
-        stage.setHeight(stage.getHeight() * factor);
+        double nextWidth = Math.max(stage.getWidth() * factor, MIN_WIDTH);
+        double nextHeight = Math.max(stage.getHeight() * factor, MIN_HEIGHT);
+        
+        stage.setWidth(nextWidth);
+        stage.setHeight(nextHeight);
     }
     
     protected void setupContextMenu() {
