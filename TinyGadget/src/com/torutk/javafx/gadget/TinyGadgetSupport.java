@@ -1,7 +1,7 @@
 /*
  * © 2017 TAKAHASHI,Toru
  */
-package tinygadget;
+package com.torutk.javafx.gadget;
 
 import java.util.prefs.Preferences;
 import javafx.scene.Scene;
@@ -21,7 +21,7 @@ import javafx.stage.WindowEvent;
  * <li>ポップアップメニューからウィンドウ終了
  * <li>終了時に位置・大きさを保存し、起動時に復元
  */
-public class TinyGadgetControl {
+public class TinyGadgetSupport {
     private static final int MIN_WIDTH = 128;
     private static final int MIN_HEIGHT = 128;
     
@@ -48,7 +48,7 @@ public class TinyGadgetControl {
      * 
      * @param stage ガジェットの振る舞いを提供する対象 stage
      */
-    public TinyGadgetControl(Stage stage) {
+    public TinyGadgetSupport(Stage stage) {
         this.stage = stage;
         if (scene != null) {
             setup();
@@ -68,7 +68,7 @@ public class TinyGadgetControl {
      * @param stage ガジェットの振る舞いを提供する対象 stage
      * @param prefs ガジェットの状態を保存する preferences
      */
-    public TinyGadgetControl(Stage stage, Preferences prefs) {
+    public TinyGadgetSupport(Stage stage, Preferences prefs) {
         this(stage);
         this.prefs = prefs;
     }

@@ -3,6 +3,7 @@
  */
 package tinygadget;
 
+import com.torutk.javafx.gadget.TinyGadgetSupport;
 import java.util.prefs.Preferences;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -16,11 +17,11 @@ import javafx.stage.Stage;
  */
 public class TinyGadgetApp extends Application {
 
-    private TinyGadgetControl gadgetControl;
+    private TinyGadgetSupport gadgetControl;
     
     @Override
     public void start(Stage stage) throws Exception {
-        gadgetControl = new TinyGadgetControl(stage, Preferences.userNodeForPackage(this.getClass()));
+        gadgetControl = new TinyGadgetSupport(stage, Preferences.userNodeForPackage(this.getClass()));
         Parent root = FXMLLoader.load(getClass().getResource("TinyGadgetView.fxml"));
         
         Scene scene = new Scene(root);
