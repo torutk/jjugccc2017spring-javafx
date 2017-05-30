@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
@@ -199,9 +200,19 @@ public class TinyGadgetSupport {
      * 永続領域に保存された状態を復元する。
      */
     private void loadStatus() {
-        stage.setX(prefs.getInt(KEY_STAGE_X, 0));
-        stage.setY(prefs.getInt(KEY_STAGE_Y, 0));
-        stage.setWidth(prefs.getInt(KEY_STAGE_WIDTH, 320));
-        stage.setHeight(prefs.getInt(KEY_STAGE_HEIGHT, 200));
+        double x = prefs.getInt(KEY_STAGE_X, 0);
+        double y = prefs.getInt(KEY_STAGE_Y, 0);
+        double width = prefs.getInt(KEY_STAGE_WIDTH, 320);
+        double height = prefs.getInt(KEY_STAGE_HEIGHT, 200);
+        if (Screen.getScreensForRectangle(x, y, width, height).isEmpty()) {
+            x = 0;
+            y = 0;
+            width = 320;
+            height = 200;
+        }
+        stage.setX(x);
+        stage.setY(y);
+        stage.setWidth(width);
+        stage.setHeight(height);
     }
 }
