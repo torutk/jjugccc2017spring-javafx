@@ -146,11 +146,19 @@ public class TinyGadgetSupport {
      * @param factor 拡大率（1.0が等倍で、 1.0 より大で大きく、 1.0　より小で小さくする）
      */
     private void zoom(double factor) {
-        double nextWidth = Math.max(stage.getWidth() * factor, MIN_WIDTH);
-        double nextHeight = Math.max(stage.getHeight() * factor, MIN_HEIGHT);
+        double width = stage.getWidth();
+        double height = stage.getHeight();
+        double x = stage.getX();
+        double y = stage.getY();
+        double centerX = x + width / 2;
+        double centerY = y + height / 2;
+        double nextWidth = Math.max(width* factor, MIN_WIDTH);
+        double nextHeight = Math.max(height * factor, MIN_HEIGHT);
         
         stage.setWidth(nextWidth);
         stage.setHeight(nextHeight);
+        stage.setX(centerX - nextWidth / 2);
+        stage.setY(centerY - nextHeight / 2);
     }
     
     protected void setupContextMenu() {
