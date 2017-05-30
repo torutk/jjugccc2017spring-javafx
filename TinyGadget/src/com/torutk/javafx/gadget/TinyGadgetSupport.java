@@ -14,12 +14,38 @@ import javafx.stage.WindowEvent;
 
 /**
  * ガジェットプログラムに共通する振る舞いをユーティリティとして提供するクラス。
- * 
+ * <p>
+ * 主な機能は次のとおり。
+ * <ul>
  * <li>マウスドラッグによるウィンドウの移動
  * <li>Ctrlキー+マウスホイールによるウィンドウの大きさ変更
  * <li>ピンチ操作によるウィンドウの大きさ変更
  * <li>ポップアップメニューからウィンドウ終了
  * <li>終了時に位置・大きさを保存し、起動時に復元
+ * </ul>
+ * <p>
+ * 使用方法
+ * <ol>
+ * <li>保存と復元機能を使わない場合
+ * <pre>{@code
+ * public class GadgetSample extends Application {
+ *     public void start(Stage stage) {
+ *         new TinyGadgetSupport(stage);
+ *         :
+ *     }
+ * }
+ * }</pre>
+ * <li>保存と復元機能を使う場合
+ * <pre>{@code
+ * public class GadgetSample extends Application {
+ *     public void start(Stage stage) {
+ *         new TinyGadgetSupport(stage, Preferences.userNodeForPackage(this.getClass()));
+ *         :
+ *     }
+ * }
+ * }</pre>
+ * </ol>
+ * 
  */
 public class TinyGadgetSupport {
     private static final int MIN_WIDTH = 128;
@@ -76,7 +102,7 @@ public class TinyGadgetSupport {
     /**
      * ガジェットの振る舞いを、stage, scene に設定する。
      */
-    protected void setup() {
+    private void setup() {
         scene.setFill(Color.TRANSPARENT);
         setupDragMove();
         setupResize();
